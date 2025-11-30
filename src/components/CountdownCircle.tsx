@@ -7,7 +7,7 @@ import {
   Session, 
   SessionProgress, 
 } from '../types/session.types';
-import { useAlarm } from '../hooks/useAlarm';
+import useAlarm  from '../hooks/useAlarm';
 
 const { width, height } = Dimensions.get('window');
 
