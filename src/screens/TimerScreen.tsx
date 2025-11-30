@@ -85,11 +85,17 @@ const TimerScreen: React.FC<TimerScreenProps> = ({ addHistoryItem, route }) => {
 
   const getTotalSessionTime = (config: SessionConfig): number => {
     const totalWorkTime = config.workTime * config.rounds;
-    const totalBreakTime = config.breakTime * (config.rounds - 1);
-    const longBreaks = Math.floor(config.rounds / config.roundsUntilLongBreak);
-    const additionalLongBreakTime = longBreaks * (config.longBreakTime - config.breakTime);
-    
-    return totalWorkTime + totalBreakTime + additionalLongBreakTime;
+    let totalBreakTime = 0;
+
+    if (config.workflowType === 'pomodoro') {
+      const numLongBreaks = Math.floor(config.rounds / config.roundsUntilLongBreak);
+      const numShortBreaks = (config.rounds) - numLongBreaks;
+   
+      totalBreakTime = (numShortBreaks * config.breakTime) + (numLongBreaks * config.longBreakTime);
+    } else {
+      totalBreakTime = config.rounds * config.breakTime;
+    }
+    return totalWorkTime + totalBreakTime;
   };
 
   const handleAllSessionsComplete = (progress: SessionProgress) => {

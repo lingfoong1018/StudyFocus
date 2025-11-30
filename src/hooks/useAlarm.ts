@@ -1,15 +1,25 @@
-import { Vibration, Alert } from 'react-native';
+// hooks/useAlarm.ts
+import { Vibration, ToastAndroid, Platform } from 'react-native';
 
-export const useAlarm = () => {
+const useAlarm = () => {
   const triggerAlarm = () => {
-    // Vibrate pattern: vibrate for 1s, pause for 0.5s, repeat 3 times
-    //Vibration.vibrate([1000, 500, 1000, 500, 1000, 500]);
-
+    Vibration.vibrate([1000, 500, 1000, 500, 1000], false);
+    
+    // System notification (Android)
+    if (Platform.OS === 'android') {
+      ToastAndroid.showWithGravity(
+        '⏰ Timer Complete!',
+        ToastAndroid.LONG,
+        ToastAndroid.CENTER
+      );
+    }
   };
 
   const stopAlarm = () => {
-    //Vibration.cancel();
+    Vibration.cancel();
   };
 
   return { triggerAlarm, stopAlarm };
 };
+
+export default useAlarm;

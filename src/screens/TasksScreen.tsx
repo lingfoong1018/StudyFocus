@@ -35,7 +35,7 @@ interface Workflow {
   longBreakEvery: number;
 }
 
-const TimerScreen: React.FC = () => {
+const TasksScreen: React.FC = () => {
   const navigation = useNavigation<any>();
   const [showWorkflowModal, setShowWorkflowModal] = useState(false);
   const [showTaskModal, setShowTaskModal] = useState(false);
@@ -142,6 +142,11 @@ const TimerScreen: React.FC = () => {
       return;
     }
 
+    if (Number(customStudy) < 1 || Number(customBreak) < 1) {
+      Alert.alert('Error', 'Session times must be at least 1 minute');
+      return;
+    }    
+
     if (!selectedWorkflow) {
       Alert.alert('Error', 'Please select a workflow');
       return;
@@ -205,11 +210,12 @@ const TimerScreen: React.FC = () => {
       </Svg>
 
       {/* Header */}
-      <Text style={styles.headerTitle}>Focus Timer</Text>
+      <Text style={styles.logo}>Focus Timer</Text>
+
+      <Text style={styles.workflowTitle}>Select a Workflow</Text>
 
       {/* Main Content */}
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.workflowTitle}>Select a Workflow</Text>
 
         {workflows.map(workflow => (
           <TouchableOpacity
@@ -336,15 +342,16 @@ const TimerScreen: React.FC = () => {
                       </Text>
                     </View>
                   )}
-
-                  {/* Long break (read-only for now) */}
-                  <View style={styles.row}>
-                    <Text style={styles.fieldLabel}>Long Break:</Text>
-                    <Text style={styles.fieldValue}>
-                      {selectedWorkflow.longBreakMinutes} mins (every{' '}
-                      {selectedWorkflow.longBreakEvery} rounds)
-                    </Text>
-                  </View>
+                  
+                  {selectedWorkflow.type === 'pomodoro' && (
+                    <View style={styles.row}>
+                      <Text style={styles.fieldLabel}>Long Break:</Text>
+                      <Text style={styles.fieldValue}>
+                        {selectedWorkflow.longBreakMinutes} mins (every{' '}
+                        {selectedWorkflow.longBreakEvery} rounds)
+                      </Text>
+                    </View>
+                  )}
 
                   {/* Rounds dropdown */}
                   <Text style={[styles.fieldLabel, { marginTop: 16 }]}>
@@ -366,8 +373,8 @@ const TimerScreen: React.FC = () => {
                   {showRoundsDropdown && (
                     <View style={styles.dropdownList}>
                       <ScrollView nestedScrollEnabled={true}>
-                        {Array.from({ length: 11 }).map((_, index) => {
-                          const value = index;
+                        {Array.from({ length: 10 }).map((_, index) => {
+                          const value = index + 1;
                           const isSelected = value === rounds;
                           return (
                             <TouchableOpacity
@@ -432,29 +439,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  headerTitle: {
+  logo: {
     position: 'absolute',
     top: 60,
     left: 20,
-    fontSize: responsiveFontSize(26),
+    fontSize: 26,
     color: '#816ACE',
     zIndex: 1,
     fontFamily: 'Rubik-Regular',
   },
   scrollView: {
     flex: 1,
-    marginTop: responsiveHeight(12),
+    marginTop: responsiveHeight(2),
   },
   scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'flex-start', 
     paddingHorizontal: 20,
-    paddingBottom: responsiveHeight(12),
+    paddingBottom: 20,
   },
   workflowTitle: {
-    fontSize: responsiveFontSize(20),
+    fontSize: responsiveFontSize(24),
     color: '#816ACE',
-    fontFamily: 'Rubik-Medium',
-    marginBottom: 20,
-    textAlign: 'center',
+    fontFamily: 'Rubik-Regular',
+    alignSelf: 'center',
+    marginTop: responsiveHeight(14),
   },
   workflowCard: {
     backgroundColor: '#9C6BA3',
@@ -692,4 +701,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TimerScreen;
+export default TasksScreen;
